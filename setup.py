@@ -28,6 +28,7 @@ setup(
     install_requires=[
         'setuptools',
         'Flask',
+        'pylibmc',
     ],
     test_suite='test_cache',
     classifiers=[
