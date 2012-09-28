@@ -15,17 +15,17 @@ __versionfull__ = __version__
 import uuid
 import hashlib
 import inspect
-import warnings
 import exceptions
 
 from types import NoneType
 from functools import wraps
 
 from werkzeug import import_string
-from werkzeug.contrib.cache import BaseCache, NullCache
-from flask import request, current_app
+from werkzeug.contrib.cache import BaseCache
+from flask import request
 
 JINJA_CACHE_ATTR_NAME = '_template_fragment_cache'
+
 
 def function_namespace(f):
     """
@@ -176,8 +176,9 @@ class Cache(object):
                     The original undecorated function
 
                 **cache_timeout**
-                    The cache timeout value for this function. For a custom value
-                    to take affect, this must be set before the function is called.
+                    The cache timeout value for this function. For a custom
+                    value to take affect, this must be set before the function
+                    is called.
 
                 **make_cache_key**
                     A function used in generating the cache_key used.
@@ -188,8 +189,9 @@ class Cache(object):
                            use for the cache key.
 
                            .. versionadded:: 0.3.4
-                               Can optionally be a callable which takes no arguments
-                               but returns a string that will be used as the cache_key.
+                               Can optionally be a callable which takes no
+                               arguments but returns a string that will be used
+                               as the cache_key.
 
         :param unless: Default None. Cache will *always* execute the caching
                        facilities unless this callable is true.
@@ -325,8 +327,9 @@ class Cache(object):
                     The original undecorated function. readable only
 
                 **cache_timeout**
-                    The cache timeout value for this function. For a custom value
-                    to take affect, this must be set before the function is called.
+                    The cache timeout value for this function. For a custom
+                    value to take affect, this must be set before the function
+                    is called.
 
                     readable and writable
 
@@ -340,8 +343,8 @@ class Cache(object):
                         amount of time. Unit of time is in seconds.
         :param make_name: Default None. If set this is a function that accepts
                           a single argument, the function name, and returns a
-                          new string to be used as the function name. If not set
-                          then the function name is used.
+                          new string to be used as the function name. If not
+                          set then the function name is used.
         :param unless: Default None. Cache will *always* execute the caching
                        facilities unelss this callable is true.
                        This will bypass the caching entirely.
@@ -357,7 +360,8 @@ class Cache(object):
                 if callable(unless) and unless() is True:
                     return f(*args, **kwargs)
 
-                cache_key = decorated_function.make_cache_key(f, *args, **kwargs)
+                cache_key = decorated_function.make_cache_key(f, *args,
+                                                              **kwargs)
 
                 rv = self.cache.get(cache_key)
                 if rv is None:
@@ -370,8 +374,7 @@ class Cache(object):
 
             decorated_function.uncached = f
             decorated_function.cache_timeout = timeout
-            decorated_function.make_cache_key = self.memoize_make_cache_key(fname,
-                                                                            make_name)
+            decorated_function.make_cache_key = self.memoize_make_cache_key(fname, make_name)
             decorated_function.delete_memoized = lambda: self.delete_memoized(f)
 
             return decorated_function
@@ -380,8 +383,9 @@ class Cache(object):
     def delete_memoized(self, fname, *args, **kwargs):
         """
         Deletes the specified functions caches, based by given parameters.
-        If parameters are given, only the functions that were memoized with them
-        will be erased. Otherwise all the versions of the caches will be deleted.
+        If parameters are given, only the functions that were memoized with
+        them will be erased. Otherwise all the versions of the caches will be
+        deleted.
 
         Example::
 
@@ -415,9 +419,12 @@ class Cache(object):
             47
 
 
-        :param fname: Name of the memoized function, or a reference to the function.
-        :param \*args: A list of positional parameters used with memoized function.
-        :param \**kwargs: A dict of named parameters used with memoized function.
+        :param fname: Name of the memoized function, or a reference to the
+                      function.
+        :param \*args: A list of positional parameters used with memoized
+                       function.
+        :param \**kwargs: A dict of named parameters used with memoized
+                          function.
 
         .. note::
 
@@ -433,16 +440,18 @@ class Cache(object):
 
         .. note::
 
-            Flask-Cache maintains an internal random version hash for the function.
-            Using delete_memoized will only swap out the version hash, causing
-            the memoize function to recompute results and put them into another key.
+            Flask-Cache maintains an internal random version hash for the
+            function. Using delete_memoized will only swap out the version
+            hash, causing the memoize function to recompute results and put
+            them into anotherkey.
 
-            This leaves any computed caches for this memoized function within the
-            caching backend.
+            This leaves any computed caches for this memoized function within
+            the caching backend.
 
             It is recommended to use a very high timeout with memoize if using
-            this function, so that when the version has is swapped, the old cached
-            results would eventually be reclaimed by the caching backend.
+            this function, so that when the version has is swapped, the old
+            cached results would eventually be reclaimed by the caching
+            backend.
         """
         if callable(fname):
             assert hasattr(fname, 'uncached')
@@ -454,9 +463,10 @@ class Cache(object):
 
             #: print import_string(_fname)
 
-            raise exceptions.DeprecationWarning("Deleting messages by relative name is no longer"
-                          " reliable, please switch to a function reference"
-                          " or use the full function import name")
+            raise exceptions.DeprecationWarning("Deleting messages by relative"
+                        " name is no longer reliable, please switch to a"
+                        " function reference or use the full function import"
+                        " name")
 
         if not args and not kwargs:
             version_key = self._memvname(_fname)
