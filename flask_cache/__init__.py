@@ -99,7 +99,7 @@ class Cache(object):
             from flask.ext.cache.jinja2ext import CacheExtension
             app.jinja_env.add_extension(CacheExtension)
 
-        self.cache = self._set_cache(app, self.config)
+        self.cache = self._set_cache(app, config)
         state = _get_state(app, self.cache)
         app.extensions['cache'] = state
         return state
