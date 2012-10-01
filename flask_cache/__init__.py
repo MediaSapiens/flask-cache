@@ -101,7 +101,7 @@ class Cache(object):
 
         self.cache = self._set_cache(app, config)
         state = _get_state(app, self, backend=self.cache)
-        app.extensions['cache'] = self
+        app.extensions['cache'] = state
         return state
 
     def _set_cache(self, app, config):
