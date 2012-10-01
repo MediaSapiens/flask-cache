@@ -100,8 +100,8 @@ class Cache(object):
             app.jinja_env.add_extension(CacheExtension)
 
         self.cache = self._set_cache(app, config)
-        state = _get_state(app, self.cache)
-        app.extensions['cache'] = state
+        state = _get_state(app, self, backend=self.cache)
+        app.extensions['cache'] = self
         return state
 
     def _set_cache(self, app, config):
